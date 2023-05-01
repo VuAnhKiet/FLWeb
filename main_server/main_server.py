@@ -1,12 +1,17 @@
-from flask import Flask, request,render_template
+from flask import Flask,flash, request,render_template,redirect,url_for
 import requests, json
 import ast
 import os
 from fl_agg import model_aggregation
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-
+app.config['UPLOAD_FOLDER'] = 'main_server/UploadFolder'
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 cwd = os.getcwd()
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/')
 def hello():
@@ -73,6 +78,17 @@ def getmodel():
 def perform_model_aggregation():
 	model_aggregation()
 	return render_template("agg.html")
+
+@app.route('/uploader', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+      f = request.files['file']
+      f.save(secure_filename(f.filename))
+      return 'file uploaded successfully'
+
+@app.route('/upload')
+def uploadfile():
+      return render_template('upload.html')
 
 @app.route('/send_model_clients')
 def send_agg_to_clients():
