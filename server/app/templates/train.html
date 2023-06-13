@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+{% block content %}
+	<div class="w3-container w3-centre w3-teal w3-padding-8">
+		<h2 style="text-align: center;">Model training for Federated Client</h2>	
+	</div>
+	<div class="w3-container w3-padding-16">
+		<h3>Model training data of Federated Client</h3>
+	
+		
+		<table class="w3-table-all">
+			<tr>
+			  <th>Epoch</th>
+			  <th>Loss</th>
+			  <th>Accuracy</th>
+			  <th>Val_Loss</th>
+			  <th>Val_Accuracy</th>
+			</tr>
+			{%for i in range(0, epoch)%} 
+			<tr> 
+    		<td>{{i+1}}</td> 
+			<td>{{loss[i]}}</td>
+			<td>{{accuracy[i]}}</td>
+			<td>{{val_loss[i]}}</td>
+			<td>{{val_accuracy[i]}}</td>
+			{%endfor%}  
+  			</tr> 
+		</table>
+	</div>
+	<!--- Changes -->
+	<div class = "w3-container w3-centre">
+		<img style="align:centre;" src = "static/{{user_image}}" alt = "Image">
+		<h2>Model trained sucessfully for Federated Client</h2>		
+	</div>
+
+	<div class="w3-container w3-centre ">
+		<button class="w3-button w3-black w3-round-xxlarge" style="width:33%"><a href="http://localhost:8001/modeltrain">Re model training (Locally)</a></button>
+		<button class="w3-button w3-black w3-round-xxlarge" style="width:33%"><a href="http://localhost:8001/sendmodel">Send model to Federated Server</a></button>
+	</div>
+	
+		
+{% endblock %}
+
