@@ -16,6 +16,8 @@ login.login_view = 'login'
 mail = Mail(app)
 bootstrap = Bootstrap(app)
 admin=Admin(app)
+from app.errors import bp as errors_bp
+app.register_blueprint(errors_bp)
 
 from app import routes
 

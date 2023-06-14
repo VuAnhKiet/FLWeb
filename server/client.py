@@ -226,4 +226,4 @@ def reset_password(token):
     return render_template('reset_password.html', form=form)
 
 if __name__ == '__main__':
-	app.run(host='localhost', port=8001, debug=False, use_reloader=True)
+	app.run(host='localhost', port=8001, debug=True, use_reloader=True)
