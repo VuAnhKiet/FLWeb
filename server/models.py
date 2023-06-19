@@ -1,11 +1,17 @@
-from app import db,app
+from webapp import db,app
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from app import login
+from webapp import login
 from hashlib import md5
 import jwt
 from time import time
+from sqlalchemy import event,Enum
+from enum import Enum as UserEnum
+
+class UserRole(UserEnum):
+    ADMIN=1
+    USER=2
 
 class User(UserMixin,db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -16,6 +22,7 @@ class User(UserMixin,db.Model):
     password_hash = db.Column(db.String(128))
     model = db.relationship('Model', backref='user', lazy='dynamic')
     image = db.relationship('Image', backref='user', lazy='dynamic')
+    user_role = db.Column(Enum(UserRole), default=UserRole.USER)
     def __repr__(self):
         return '<User {}>'.format(self.username) 
     
@@ -42,10 +49,11 @@ class User(UserMixin,db.Model):
         except:
             return
         return User.query.get(id)
+    
 
 class Model(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    fname = db.Column(db.String(50))
+    filename = db.Column(db.String(50))
     model = db.Column(db.LargeBinary)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     def __repr__(self):
@@ -62,3 +70,9 @@ class Image(db.Model):
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+@event.listens_for(User.password_hash, 'set', retval=True)
+def hash_user_password(target, value, oldvalue, initiator):
+    if value != oldvalue:
+        return generate_password_hash(value)
+    return value

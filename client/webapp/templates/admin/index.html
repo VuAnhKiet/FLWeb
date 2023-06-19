@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+{% extends '/admin/master.html' %}
+{% block body %}
+	<div class="w3-container w3-light-grey w3-padding-12">
+        <h2 style="text-align: center;" id="agg"></h2>
+    </div>
+	
+
+    <div class="w3-container w3-margin-top">
+	<button onclick="agg_model()" class="w3-button w3-black w3-hover-dark-grey w3-round-xxlarge" style="width:33%"><a href="http://localhost:8000/aggregate_models">Aggregate Local Models</a></button>
+    <button onclick="modelsent()" class="w3-button w3-black w3-hover-dark-grey w3-round-xxlarge" style="width:33%" ><a href="http://localhost:8000/send_model_clients">Send Aggregated Models to Federated Clients</a></button>
+    <button class="w3-button w3-black w3-hover-dark-grey w3-round-xxlarge" style="width:33%"><a href="http://localhost:8000/upload">Upload Model</a></button>
+		<h2 class= "w3-light-grey" style="text-align: center;" id="sent"></h2>
+		<script>
+		function modelsent() {
+			document.getElementById("sent").innerHTML = "Aggregated Model sent to Federated Clients 1 and stored at Federated Clients Local Storage";
+		}
+		function agg_model() {
+			document.getElementById("agg").innerHTML = "Model Aggregation completed and Aggregated Model stored at Global Storage.";
+		}
+		</script>
+	</div>
+	
+{% endblock %}
+</html> 
