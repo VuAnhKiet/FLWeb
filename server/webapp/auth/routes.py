@@ -1,7 +1,7 @@
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from model_train import train
+
 from webapp import app,db
 import cv2
 import ast

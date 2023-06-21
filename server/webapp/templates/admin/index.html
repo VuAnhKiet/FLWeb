@@ -2,43 +2,48 @@
 <html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+{% import 'bootstrap/wtf.html' as wtf %}
+
 {% extends '/admin/master.html' %}
 {% block body %}
-	<div class="w3-container w3-light-grey w3-padding-12" >
-        <h2 style="text-align: center;" id="agg">
-			<img src="Federated-Learning.png" alt="FL">
-		</h2>
-    </div>
 	
-
+	{%if current_user.is_authenticated%}
     <div class="w3-container w3-margin-top">
 	<button onclick="agg_model()" class="w3-button w3-black w3-hover-dark-grey w3-round-xxlarge" style="width:33%"><a href="http://localhost:8000/aggregate_models/">Aggregate Local Models</a></button>
     <button onclick="modelsent()" class="w3-button w3-black w3-hover-dark-grey w3-round-xxlarge" style="width:33%" ><a href="http://localhost:8000/send_model_clients/">Send Aggregated Models to Federated Clients</a></button>
     <button class="w3-button w3-black w3-hover-dark-grey w3-round-xxlarge" style="width:33%"><a href="http://localhost:8000/upload/">Upload Model</a></button>
 		<h2 class= "w3-light-grey" style="text-align: center;" id="sent"></h2>
+		<div class="w3-container w3-padding-12" >
+			<h2 style="text-align: center;" id="agg"></h2>
+		</div>
 		<script>
 		function modelsent() {
-			document.getElementById("sent").innerHTML = "Aggregated Model sent to Federated Clients 1 and stored at Federated Clients Local Storage";
+			document.getElementById("sent").innerHTML = "Aggregated Model has been sent!";
 		}
 		function agg_model() {
-			document.getElementById("agg").innerHTML = "Model Aggregation completed and Aggregated Model stored at Global Storage.";
+			document.getElementById("agg").innerHTML = "Model Aggregation completed!";
 		}
 		</script>
 	</div>
+	{%else%}
 	
-	{% block content %}
-    <div class="container">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-info" role="alert">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-        {% endwith %}
+	{% block app_content %}
+	<h1 class="text-info text-center">SIGN IN</h1>
+    <form method="POST"action="{{url_for('login')}}">
+		<div class="form-group">
+		  <label for="username">UserName:</label>
+		  <input type="text" class="form-control" id="username" name="username">
+		</div>
+		<div class="form-group">
+		  <label for="pwd">Password:</label>
+		  <input type="password" class="form-control" id="pwd" name="password">
+		</div>
+		
+		<button type="submit" class="btn btn-primary">SIGNIN</button>
+	  </form>
+	{%endblock%}
+	{% endif %}
 
-        {# application content needs to be provided in the app_content block #}
-        {% block app_content %}{% endblock %}
-    </div>
-	{% endblock %}
 	{%endblock%}
 </html> 

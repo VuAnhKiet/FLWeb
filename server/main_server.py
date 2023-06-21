@@ -6,7 +6,7 @@ from fl_agg import model_aggregation
 from werkzeug.utils import secure_filename
 from webapp.main.forms import LoginForm,EditProfileForm,ResetPasswordRequestForm
 from webapp import app,db,admin
-from models import User,Model,Image
+from models import User,Model,Image,UserRole
 from flask_login import current_user, login_user
 from flask_login import logout_user
 from flask_login import login_required
@@ -14,9 +14,10 @@ from webapp.auth.forms import RegistrationForm,ResetPasswordForm
 from datetime import datetime
 from webapp.email import send_password_reset_email
 from flask_admin.contrib.sqla import ModelView
-from flask_admin import BaseView, expose
-from models import User,Model,Image
-
+from flask_admin import BaseView, expose,AdminIndexView,Admin
+from models import User,Model,Image,UserRole
+from flask_admin.contrib.fileadmin import FileAdmin
+import hashlib
 UPLOAD_FOLDER = "/Upload"
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'h5'}
@@ -24,6 +25,7 @@ cwd = os.getcwd()
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+path=os.path.join(os.path.dirname(__file__),'static')
 
 @app.shell_context_processor
 def make_shell_context():
@@ -31,7 +33,6 @@ def make_shell_context():
 
 @app.route('/')
 def server():
-    
     return render_template("admin/index.html")
 
 @app.route('/clientstatus', methods=['GET','POST'])
@@ -131,46 +132,90 @@ def send_agg_to_clients():
     users=User.query
     return render_template("templates/sent.html",users=users)
 
+def checklogin(username,password):
+    if username and password:
+        password= str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
+        return User.query.filter(User.username.__eq__(username.strip()),User.password_hash.__eq__(password)).first()
+    return None
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('.index'))
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
-            return redirect(url_for('login'))
-        login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('.index'))
-    return render_template('login.html', title='Sign In', form=form)
+        return redirect(url_for('index'))
+    username=request.form.get('username')
+    password=request.form.get('password')
+    user = User.query.filter_by(username=username).first()
+    if user is None or not user.check_password(password):
+        return redirect(url_for('login'))
+    login_user(user)
+    return redirect('/admin')
 
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('index'))
 
-class UploadView(BaseView):
+# class MyHomeView(AdminIndexView):
+#     @expose('/')
+#     def index(self):
+#         User=User
+#         UserRole=UserRole
+#         return self.render('admin/index.html',User=User,UserRole=UserRole )
+    
+
+
+class AuthenticatedBaseView(BaseView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
+    
+class AuthenticatedModelView(ModelView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
+    
+class AuthenticatedFileAdminlView(FileAdmin):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
+class UploadView(AuthenticatedBaseView):
     @expose('/')
     def index(self):
         # Here are the contents of your "contact" route function
         return self.render('upload.html')
+    
 
-class AggModel(BaseView):
+class AggModel(AuthenticatedBaseView):
     @expose('/')
     def index(self):
         model_aggregation()
         return self.render('agg.html')
+    
 
-class SentModel(BaseView):
+class SentModel(AuthenticatedBaseView):
     @expose('/')
     def index(self):
         return self.render('sent.html')
+    @expose('/send_model_clients')
+    def send_model():
+        users=User().query.filter_by(id=id).first()
+        return render_template('templates/sent.html',users=users)
+    
 
-admin.add_view(ModelView(User,db.session))
-admin.add_view(UploadView('Upload', url='/upload'))
-admin.add_view(AggModel('AggModel', url='/aggregate_models'))
-admin.add_view(SentModel('SentModel', url='/send_model_clients'))
+
+
+class Logout(AuthenticatedBaseView):
+    @expose('/')
+    def index(self):
+        logout_user()
+        return self.render('admin/index.html')
+    
+
+
+
+admin.add_view(AuthenticatedModelView(User,db.session))
+admin.add_view(UploadView('UPLOAD', url='/upload'))
+admin.add_view(AggModel('AGGMODEL', url='/aggregate_models'))
+admin.add_view(SentModel('SENTMODEL', url='/send_model_clients'))
+admin.add_view(AuthenticatedFileAdminlView(path, '/static/', name='STATIC'))
+admin.add_view(Logout('LOGOUT'))
 
 
 

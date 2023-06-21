@@ -19,6 +19,11 @@ def allowed_file(filename):
 def make_shell_context():
     return {'db': db, 'User': User, 'Model': Model, 'Image': Image}
 
+@app.route('/upload', methods=['GET', 'POST'])
+@login_required
+def uploadfile():
+      return render_template('upload.html')
+
 @app.route('/uploader', methods=['GET', 'POST'])
 @login_required
 def upload_file():
@@ -32,7 +37,8 @@ def upload_file():
                 os.mkdir(path2)
             filename = os.path.join(path, secure_filename(os.path.basename(file.filename)))
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return 'Files uploaded.'
+            # flash('Upload success!')
+        return 'Upload success'
     # return redirect(url_for('uploadfile'))
 
 if __name__ == '__main__':

@@ -3,16 +3,16 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField,TextAr
 from wtforms.validators import DataRequired, Length, Email
  
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember me')
-    submit = SubmitField('Sign In')
+    username = StringField('Tên đăng nhập', validators=[DataRequired()])
+    password = PasswordField('Mật khẩu', validators=[DataRequired()])
+    remember_me = BooleanField('Ghi nhớ lần đăng nhập kế tiếp')
+    submit = SubmitField('Đăng nhập')
 
 class EditProfileForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    about_me = TextAreaField('About me', validators=[Length(min=0, max=140)])
-    submit = SubmitField('Submit')
+    username = StringField('Tên đăng nhập', validators=[DataRequired()])
+    about_me = TextAreaField('Giới thiệu về bản thân', validators=[Length(min=0, max=140)])
+    submit = SubmitField('Hoàn tất')
 
 class ResetPasswordRequestForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
-    submit = SubmitField('Request Password Reset')
+    submit = SubmitField('Yêu cầu cài lại mật khẩu')
