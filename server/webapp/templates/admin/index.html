@@ -9,39 +9,43 @@
 {% block body %}
 	
 	{%if current_user.is_authenticated%}
+	<image style="align:centre;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Centralized_federated_learning_protocol.png/1280px-Centralized_federated_learning_protocol.png" class="center" width="800" height="450" alt="FL"></image>
     <div class="w3-container w3-margin-top">
-	<button onclick="agg_model()" class="w3-button w3-black w3-hover-dark-grey w3-round-xxlarge" style="width:33%"><a href="http://localhost:8000/aggregate_models/">Aggregate Local Models</a></button>
-    <button onclick="modelsent()" class="w3-button w3-black w3-hover-dark-grey w3-round-xxlarge" style="width:33%" ><a href="http://localhost:8000/send_model_clients/">Send Aggregated Models to Federated Clients</a></button>
-    <button class="w3-button w3-black w3-hover-dark-grey w3-round-xxlarge" style="width:33%"><a href="http://localhost:8000/upload/">Upload Model</a></button>
+	<button onclick="agg_model()" class="w3-button w3-khaki w3-round-xxlarge" style="width:33%"><a href="{{url_for('perform_model_aggregation')}}">Tổng hợp mô hình</a></button>
+    <button onclick="modelsent()" class="w3-button w3-khaki w3-round-xxlarge" style="width:33%" ><a href="{{url_for('send_agg_to_clients')}}">Gửi mô hình</a></button>
+    <button class="w3-button w3-khaki w3-round-xxlarge" style="width:33%"><a href="http://localhost:8000/upload/">Tải lên mô hình</a></button>
 		<h2 class= "w3-light-grey" style="text-align: center;" id="sent"></h2>
 		<div class="w3-container w3-padding-12" >
 			<h2 style="text-align: center;" id="agg"></h2>
 		</div>
+		
 		<script>
 		function modelsent() {
-			document.getElementById("sent").innerHTML = "Aggregated Model has been sent!";
+			document.getElementById("sent").innerHTML = "Đã gửi cho người dùng!";
 		}
 		function agg_model() {
-			document.getElementById("agg").innerHTML = "Model Aggregation completed!";
+			document.getElementById("agg").innerHTML = "Tổng hợp mô hình hoàn tất!";
 		}
 		</script>
+		
 	</div>
 	{%else%}
 	
 	{% block app_content %}
-	<h1 class="text-info text-center">SIGN IN</h1>
-    <form method="POST"action="{{url_for('login')}}">
+	<h1 class="text-info text-center">Đăng nhập</h1>
+	
+    <form method="POST"action="{{url_for('login')}}" style=" margin-right: auto; margin-left: auto; width: 400px;">
 		<div class="form-group">
-		  <label for="username">UserName:</label>
+		  <label for="username">Tên đăng nhập:</label>
 		  <input type="text" class="form-control" id="username" name="username">
 		</div>
 		<div class="form-group">
-		  <label for="pwd">Password:</label>
+		  <label for="pwd">Mật khẩu:</label>
 		  <input type="password" class="form-control" id="pwd" name="password">
 		</div>
 		
-		<button type="submit" class="btn btn-primary">SIGNIN</button>
-	  </form>
+		<button type="submit" class="btn btn-primary">Đăng nhập</button>
+	</form>
 	{%endblock%}
 	{% endif %}
 

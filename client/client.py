@@ -38,7 +38,7 @@ def upload_file():
             filename = os.path.join(path, secure_filename(os.path.basename(file.filename)))
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             # flash('Upload success!')
-        return 'Upload success'
+        return 'Tải bộ dữ liệu lên đã thành công'
     # return redirect(url_for('uploadfile'))
 
 if __name__ == '__main__':

@@ -31,9 +31,9 @@ path=os.path.join(os.path.dirname(__file__),'static')
 def make_shell_context():
     return {'db': db, 'User': User, 'Model': Model, 'Image': Image}
 
-@app.route('/')
-def server():
-    return render_template("admin/index.html")
+# @app.route('/')
+# def server():
+#     return render_template("admin/index.html")
 
 @app.route('/clientstatus', methods=['GET','POST'])
 def client_status():
@@ -88,14 +88,14 @@ def getmodel():
         wfile = open(cwd + "/client_models/"+fname, 'wb')
         wfile.write(file)
             
-        return "Model received!"
+        return "Nhận được mô hình"
     else:
-        return "No file received!"
+        return "Không nhận được"
         
 @app.route('/aggregate_models')
 def perform_model_aggregation():
     model_aggregation()
-    return render_template("/agg.html")
+    return redirect('/admin')
 
 @app.route('/uploader', methods=['GET', 'POST'])
 def upload_file():
@@ -130,7 +130,7 @@ def send_agg_to_clients():
             req = requests.post(url=c+'aggmodel', files=files)
             print(req.status_code)
     users=User.query
-    return render_template("templates/sent.html",users=users)
+    return redirect('/admin')
 
 def checklogin(username,password):
     if username and password:
@@ -211,11 +211,11 @@ class Logout(AuthenticatedBaseView):
 
 
 admin.add_view(AuthenticatedModelView(User,db.session))
-admin.add_view(UploadView('UPLOAD', url='/upload'))
-admin.add_view(AggModel('AGGMODEL', url='/aggregate_models'))
-admin.add_view(SentModel('SENTMODEL', url='/send_model_clients'))
-admin.add_view(AuthenticatedFileAdminlView(path, '/static/', name='STATIC'))
-admin.add_view(Logout('LOGOUT'))
+admin.add_view(UploadView('Tải lên', url='/upload'))
+# admin.add_view(AggModel('AGGMODEL', url='/aggregate_models'))
+# admin.add_view(SentModel('SENTMODEL', url='/send_model_clients'))
+admin.add_view(AuthenticatedFileAdminlView(path, '/static/', name='Biểu đồ'))
+admin.add_view(Logout('Đăng xuất'))
 
 
 
