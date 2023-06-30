@@ -29,16 +29,18 @@ def uploadfile():
 def upload_file():
     if request.method =='POST':
         files = request.files.getlist("file[]")
-        print(request.files)
+        # print(request.files)
         for file in files:
             path = os.path.dirname(file.filename)
             path2 = os.path.join(app.config['UPLOAD_FOLDER'], path)
+            path3 = os.path.join(path2, path)
             if not os.path.exists(path2):
-                os.mkdir(path2)
+                os.makedirs(path2)
+            
             filename = os.path.join(path, secure_filename(os.path.basename(file.filename)))
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            # flash('Upload success!')
-        return 'Tải bộ dữ liệu lên đã thành công'
+        flash('Upload success!')
+        return redirect(url_for('index'))
     # return redirect(url_for('uploadfile'))
 
 if __name__ == '__main__':

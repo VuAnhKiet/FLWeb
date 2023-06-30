@@ -6,13 +6,15 @@
 
 {% block content %}
     
-    <h1>Tải thư mục dữ liệu lên</h1>
-    <form action="http://localhost:8001/uploader" method="POST" enctype="multipart/form-data">
-        <p><input type="file" name="file[]" webkitdirectory="" directory="">
+    <h1 class = "w3-center">Tải thư mục dữ liệu lên</h1>
+    <div class="w3-container w3-center ">
+    <image src='static/structure/dataset_structure.png' class="border border-light"alt="dataset"></image>
+    </div>
+    <form action="http://localhost:8001/uploader" method="POST" class=" " enctype="multipart/form-data">
+        <p><input type="file" name="file[]" webkitdirectory="" directory="" class="w3-center">
         <input type='submit' value='Upload'>
         </p>
-    
     </form>
-	
+    
 {% endblock %}
 

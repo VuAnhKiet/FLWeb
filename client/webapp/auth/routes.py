@@ -17,6 +17,17 @@ from models import User,Model,Image
 from webapp.auth.forms import RegistrationForm,ResetPasswordForm
 from webapp.email import send_password_reset_email
 import shutil
+import pathlib
+
+def del_folder(path):
+    for sub in path.iterdir():
+        if sub.is_dir():
+        # Delete directory if it's a subdirectory
+            del_folder(sub)
+        else :
+        # Delete file if it is a file:
+            sub.unlink()
+    
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -34,10 +45,15 @@ def login():
 
 @app.route('/logout')
 def logout():
-    # location="./UploadFolder/"
-    # dir="image_dataset_path"
-    # path=os.path.join(location,dir)
-    # shutil.rmtree(path)
+    # # location="./UploadFolder/"
+    dir="./UploadFolder/image_dataset_path"
+    # files=[f for f in os.listdir(dir) if os.path.isfile(f)]
+    # for f in files:
+    #     if f.endswith(('.png','.jpg')):
+    #         os.remove(f)
+    # # path=os.path.join(location,dir)
+    # # shutil.rmtree(path)
+    del_folder(pathlib.Path('./UploadFolder/image_dataset_path'))
     logout_user()
     return redirect(url_for('index'))
 

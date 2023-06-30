@@ -25,15 +25,16 @@ cwd = os.getcwd()
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-path=os.path.join(os.path.dirname(__file__),'static')
+path=os.path.join(os.path.dirname(__file__),'webapp/static')
 
 @app.shell_context_processor
 def make_shell_context():
     return {'db': db, 'User': User, 'Model': Model, 'Image': Image}
 
 # @app.route('/')
-# def server():
-#     return render_template("admin/index.html")
+# def index():
+#     userrole=UserRole
+#     return render_template("admin/index.html",userrole=userrole)
 
 @app.route('/clientstatus', methods=['GET','POST'])
 def client_status():
@@ -104,7 +105,7 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(file.filename)
-            return f'Files Uploaded !'
+            return redirect('/admin')
 
 @app.route('/upload')
 def uploadfile():
@@ -144,7 +145,8 @@ def login():
         return redirect(url_for('index'))
     username=request.form.get('username')
     password=request.form.get('password')
-    user = User.query.filter_by(username=username).first()
+    user = User.query.filter(User.username==username,User.user_role == UserRole.ADMIN).first()
+    # user = user.query.filter(user.user_role == UserRole.ADMIN)
     if user is None or not user.check_password(password):
         return redirect(url_for('login'))
     login_user(user)
